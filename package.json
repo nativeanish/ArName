@@ -4,17 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@types/node": "^18.0.0",
-    "arlocal": "1.1.42",
     "arweave": "1.11.4",
-    "copyfiles": "^2.4.1",
-    "esbuild": "^0.14.47",
-    "jest": "^28.1.1",
-    "replace-in-file": "^6.3.5",
-    "rimraf": "^3.0.2",
-    "ts-jest": "^28.0.5",
-    "ts-node": "^10.8.1",
-    "typescript": "^4.7.4",
     "warp-contracts": "1.0.1"
   },
   "scripts": {
@@ -26,6 +16,16 @@
     "test": "npx jest tests"
   },
   "devDependencies": {
+    "arlocal": "1.1.42",
+    "jest": "^28.1.1",
+    "replace-in-file": "^6.3.5",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^28.0.5",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.7.4",
+    "copyfiles": "^2.4.1",
+    "esbuild": "^0.14.47",
+    "@types/node": "^17.0.0",
     "@types/jest": "^28.1.3"
   }
 }
