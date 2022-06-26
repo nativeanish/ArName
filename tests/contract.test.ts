@@ -15,6 +15,7 @@ describe("testing the name contracts", () => {
   let warp: Warp;
   let contractTxId: string;
   const db: Array<{ pid: string; handle: string; timestamp: string }> = [];
+  const perdb: Array<{ handle: string; perma: string; timestamp: string }> = [];
   beforeAll(async () => {
     arlocal = new ArLocal(8080);
     await arlocal.start();
@@ -54,6 +55,7 @@ describe("testing the name contracts", () => {
     expect(state).toEqual({
       db: db,
       maintainer: "inVhkOKTRDxZRwC5wOOf6mG5zJS25IJr2AlAaq_xzM0",
+      per_db: perdb,
     });
   });
 
@@ -72,6 +74,7 @@ describe("testing the name contracts", () => {
     expect(state).toEqual({
       db: db,
       maintainer: "inVhkOKTRDxZRwC5wOOf6mG5zJS25IJr2AlAaq_xzM0",
+      per_db: perdb,
     });
   });
   it("adding another userhandle", async () => {
@@ -89,6 +92,7 @@ describe("testing the name contracts", () => {
     expect(state).toEqual({
       db: db,
       maintainer: "inVhkOKTRDxZRwC5wOOf6mG5zJS25IJr2AlAaq_xzM0",
+      per_db: perdb,
     });
   });
   it("registering one more usehandle for same wallet1 address", async () => {
@@ -108,6 +112,7 @@ describe("testing the name contracts", () => {
         { pid: pid, handle: "macron", timestamp: d.toString() },
       ],
       maintainer: "inVhkOKTRDxZRwC5wOOf6mG5zJS25IJr2AlAaq_xzM0",
+      per_db: perdb,
     });
   });
   it("registering registered userhandle", async () => {
@@ -127,6 +132,7 @@ describe("testing the name contracts", () => {
         { pid: pid, handle: "nativeanish", timestamp: d.toString() },
       ],
       maintainer: "inVhkOKTRDxZRwC5wOOf6mG5zJS25IJr2AlAaq_xzM0",
+      per_db: perdb,
     });
   });
   it("registering new userHandle with last account", async () => {
@@ -144,6 +150,7 @@ describe("testing the name contracts", () => {
     expect(state).toEqual({
       db: db,
       maintainer: "inVhkOKTRDxZRwC5wOOf6mG5zJS25IJr2AlAaq_xzM0",
+      per_db: perdb,
     });
   });
   it("registering one more usehandle for wallet2", async () => {
@@ -163,6 +170,7 @@ describe("testing the name contracts", () => {
         { pid: pid, handle: "linux", timestamp: d.toString() },
       ],
       maintainer: "inVhkOKTRDxZRwC5wOOf6mG5zJS25IJr2AlAaq_xzM0",
+      per_db: perdb,
     });
   });
   it("testing the get method", async () => {
@@ -234,5 +242,44 @@ describe("testing the name contracts", () => {
     });
     //@ts-ignore
     expect(state.result["success"]).toEqual(0);
+  });
+  it("adding id to per database to show handle", async () => {
+    const contract = warp.contract(contractTxId).connect(wallet);
+    const date = new Date().getTime() / 1000;
+    const d = parseInt(date.toString());
+    await contract.writeInteraction({
+      function: "register_perma",
+      contract: "anishj8fr",
+    });
+    perdb.push({
+      handle: "nativeanish",
+      perma: "anishj8fr",
+      timestamp: String(d),
+    });
+    await mineBlock(arweave);
+    const state = await contract.readState();
+    expect(state.state).toEqual({
+      db: db,
+      maintainer: "inVhkOKTRDxZRwC5wOOf6mG5zJS25IJr2AlAaq_xzM0",
+      per_db: perdb,
+    });
+  });
+  it("getting id to per database to get handle", async () => {
+    const contract = warp.contract(contractTxId).connect(wallet);
+    const data = await contract.viewState<{ function: string | getReturn }>({
+      function: "get_perma",
+    });
+    expect(data.result).toEqual({
+      success: 1,
+      data: perdb,
+    });
+  });
+  it("testing the get_perma method with unregistered wallet", async () => {
+    const contract = warp.contract(contractTxId).connect(wallet1);
+    const data = await contract.viewState<{ function: string | getReturn }>({
+      function: "get_perma",
+    });
+    //@ts-ignore
+    expect(data.result["success"]).toEqual(0);
   });
 });

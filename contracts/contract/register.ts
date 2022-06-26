@@ -20,14 +20,11 @@ async function register(state: State, action: Action): Promise<registerReturn> {
   if (name.length === 0 && id.length === 0) {
     //@ts-ignore
     const time = SmartWeave.block.timestamp;
-    state.db = [
-      ...state.db,
-      {
-        pid: String(owner),
-        handle: String(action.input.handle),
-        timestamp: String(time),
-      },
-    ];
+    state.db.push({
+      pid: String(owner),
+      handle: String(action.input.handle),
+      timestamp: String(time),
+    });
     return { state: state };
   }
   return { state: state };
